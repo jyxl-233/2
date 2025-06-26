@@ -33,3 +33,13 @@ if not api_key:
 
 for role, content in st.session_state['messages']:
     st.chat_message(role).write(content)
+    
+user_input = st.chat_input(placeholder='请输入:')
+if user_input:
+    _, history = st.session_state['messages'][-1]
+    st.session_state['messages'].append(('human',user_input))
+    st.chat_message('human').write(user_input)
+    with st.spinner('AI正在思考，请耐心等待....'):
+        answer = get_answer(f'{history},{user_input}')
+        result = st.chat_message('ai').write.stream(answer)
+        st.session_state['messages'].append(('ai',result))
